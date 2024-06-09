@@ -61,6 +61,10 @@ section {
     width: 100vw;
 }
 
+.section__extra-margin {
+    margin-top: 7rem;
+}
+
 h1,
 h2,
 h3,
@@ -350,7 +354,7 @@ footer ul a:hover {
     text-align: center;
     padding: 1.5rem 0;
     border-top: 2px solid var(--color-bg);
-    ow margin-top: 7rem;
+    margin-top: 7rem;
 }
 
 .search__bar-container {
@@ -474,6 +478,11 @@ footer ul a:hover {
 .alert__message.success {
     background: var(--color-green-light);
     color: var(--color-green);
+}
+
+/* center txt of alert .eg.empty category posts pagr */
+.alert__message .lg {
+    text-align: center;
 }
 
 form {

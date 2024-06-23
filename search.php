@@ -1,32 +1,19 @@
-<?php include 'partials/header.php';
+<?php
+require 'partials/header.php';
 
-///fetch posts from db if id is set
-if (isset($_GET['id'])) {
-    $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
-    $query = "SELECT * FROM posts WHERE category_id = $id ORDER BY date_time DESC";
+if (isset($_GET['search']) && isset($_GET['submit'])) {
+    $search = filter_var($_GET['search'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $query = "SELECT * FROM posts WHERE titre LIKE '%$search%' ORDER BY date_time DESC";
     $posts = mysqli_query($connection, $query);
 } else {
     header('location:' . ROOT_URL . 'blog.php');
     die();
 }
-
-
 ?>
-<header class="category__title">
-    <h2> <?php
-            //fetch category from categories table using category_id of post 
-            $categry_id = $id;
-            $category_query = "SELECT * FROM categories WHERE id = $id";
-            $category_result = mysqli_query($connection, $category_query);
-            $category = mysqli_fetch_assoc($category_result);
-            echo $category['titre'];
-            ?>
-    </h2>
-</header>
-<!-- ===========================END OF category title=========================== -->
-<?php
-if (mysqli_num_rows($posts) > 0) : ?>
-    <section class="posts">
+
+
+<?php if (mysqli_num_rows($posts) > 0) : ?>
+    <section class="posts section__extra-margin">
         <div class="container posts__container">
             <?php while ($post = mysqli_fetch_assoc($posts)) : ?>
                 <article class="post">
@@ -34,6 +21,14 @@ if (mysqli_num_rows($posts) > 0) : ?>
                         <img src="./images/<?= $post['couverture'] ?>">
                     </div>
                     <div class=" post__info">
+                        <?php
+                        //fetch category from categories table using category_id of post 
+                        $categry_id = $post['category_id'];
+                        $category_query = "SELECT * FROM categories WHERE id = $categry_id";
+                        $category_result = mysqli_query($connection, $category_query);
+                        $category = mysqli_fetch_assoc($category_result);
+                        ?>
+                        <a href="<?= ROOT_URL ?>category-posts.php?id=<?= $post['category_id'] ?>" class="category__button"><?= $category['titre'] ?></a>
                         <h3 class="post__title">
                             <a href="<?= ROOT_URL ?>post.php?id=<?= $post['id'] ?>"><?= $post['titre'] ?></a>
                         </h3>
@@ -65,8 +60,8 @@ if (mysqli_num_rows($posts) > 0) : ?>
         </div>
     </section>
 <?php else : ?>
-    <div class="alert__message error lg">
-        <p>Pas de post dans cette catégorie</p>
+    <div class="alert__message error lg section__extra-margin">
+        <p>Pas de post dans cette recherche</p>
     </div>
 <?php endif ?>
 
@@ -83,4 +78,6 @@ if (mysqli_num_rows($posts) > 0) : ?>
     </div>
 </div>
 <!---- ========================END OF categoreis -->
-<?php include 'partials/footer.php' ?>
+
+<?php
+require 'partials/footer.php'; ?>

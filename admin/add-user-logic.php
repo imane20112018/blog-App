@@ -19,9 +19,7 @@ if (isset($_POST['submit'])) {
     } elseif (!$nom_utilisateur) {
         $_SESSION['add-user'] = "stp entrer ton Nom d'Utilisateur";
     } elseif (!$email) {
-        $_SESSION['add-user'] = "stp entrer ton Email";
-    } elseif (!$is_admin) {
-        $_SESSION['add-user'] = "stp choisissez un role";
+        $_SESSION['add-user'] = "stp entrer un Email valide";
     } elseif (strlen($createpassword) < 8 || strlen($confirmepassword) < 8) {
         $_SESSION['add-user'] = "le mot de passe doit comprendre au moins 8 caractères ";
     } elseif (!$avatar['name']) {
@@ -68,7 +66,7 @@ if (isset($_POST['submit'])) {
     if (isset($_SESSION['add-user'])) {
         //pass form data back to signup page
         $_SESSION['add-user-data'] = $_POST;
-        header('location:' . ROOT_URL . 'add-user.php');
+        header('location:' . ROOT_URL . 'admin/add-user.php');
         die();
     } else {
         //insert new user into users table
@@ -76,7 +74,7 @@ if (isset($_POST['submit'])) {
         $insert_user_result = mysqli_query($connection, $insert_user_query);
         if (!mysqli_error($connection)) {
             //redirect to login page with success page 
-            $_SESSION['add-user-success'] = "Inscription réussie. veuillez vous connecter";
+            $_SESSION['add-user-success'] = "Nouveau utilisateur $prenom $nom est ajouté avec success.";
             header('location:' . ROOT_URL . 'admin/manage-users.php');
             die();
         }

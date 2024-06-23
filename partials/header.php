@@ -1,7 +1,7 @@
 <?php
 require 'config/database.php';
 
-//fetch curren tuser from db 
+//fetch current tuser from db 
 if (isset($_SESSION['user-id'])) {
     $id = filter_var($_SESSION['user-id'], FILTER_SANITIZE_NUMBER_INT);
     $query = "SELECT avatar FROM users WHERE id =$id";
@@ -36,7 +36,7 @@ if (isset($_SESSION['user-id'])) {
                 <?php if (isset($_SESSION['user-id'])) : ?>
                     <li class="nav__profile">
                         <div class="avatar">
-                            <img src="<?php ROOT_URL . 'images/' . $avatar['avatar'] ?>" alt="">
+                            <img src="<?= ROOT_URL . 'images/' . $avatar['avatar'] ?>">
                         </div>
                         <ul>
                             <li><a href="<?= ROOT_URL ?>admin/index.php">Tableau de bord </a></li>

@@ -1,9 +1,64 @@
-<?php include 'partials/header.php'; ?>
+<?php
+include 'partials/header.php';
+//fetch users from db but not current user
+$current_admin_id = $_SESSION['user-id'];
+
+$query = "SELECT * FROM users WHERE NOT id=$current_admin_id";
+$users = mysqli_query($connection, $query);
+?>
 
 <section class="dashboard">
+    <?php if (isset($_SESSION['add-user-success'])) : // shows if add user was successful
+    ?>
+        <div class="alert__message success container">
+            <p>
+                <?= $_SESSION['add-user-success'];
+                unset($_SESSION['add-user-success']);
+                ?>
+            </p>
+        </div>
+    <?php elseif (isset($_SESSION['edit-user-success'])) : // shows if edit user was successful
+    ?>
+        <div class="alert__message success container">
+            <p>
+                <?= $_SESSION['edit-user-success'];
+                unset($_SESSION['edit-user-success']);
+                ?>
+            </p>
+        </div>
+
+    <?php elseif (isset($_SESSION['edit-user'])) : // shows if edit user was not successful
+    ?>
+        <div class="alert__message error container">
+            <p>
+                <?= $_SESSION['edit-user'];
+                unset($_SESSION['edit-user']);
+                ?>
+            </p>
+        </div>
+    <?php elseif (isset($_SESSION['delete-user'])) : // shows if delete user was successful
+    ?>
+        <div class="alert__message error container">
+            <p>
+                <?= $_SESSION['delete-user'];
+                unset($_SESSION['delete-user']);
+                ?>
+            </p>
+        </div>
+    <?php elseif (isset($_SESSION['delete-user-success'])) : // shows if delete user was not successful
+    ?>
+        <div class="alert__message success container">
+            <p>
+                <?= $_SESSION['delete-user-success'];
+                unset($_SESSION['delete-user-success']);
+                ?>
+            </p>
+        </div>
+    <?php endif ?>
     <div class="container dashboard__container">
         <button id="show__sidebar-btn" class="sidebar__toggle"><i class="uil uil-angle-right-b"></i></button>
         <button id="hide__sidebar-btn" class="sidebar__toggle"><i class="uil uil-angle-left-b"></i></button>
+
         <aside>
             <ul>
                 <li>
@@ -12,7 +67,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="dashboard.php"><i class="uil uil-postcard"></i>
+                    <a href="<?=ROOT_URL.'admin/'?>"><i class="uil uil-postcard"></i>
                         <h5>Gérer les Posts</h5>
                     </a>
                 </li>
@@ -43,41 +98,34 @@
         </aside>
         <main>
             <h2>Gérer les Utilisateurs</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Prenom</th>
-                        <th>Nom</th>
-                        <th>Modifier</th>
-                        <th>Supprimer</th>
-                        <th>Admin</th>
+            <?php if (mysqli_num_rows($users) > 0) : ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Nom d'tilisateur</th>
+                            <th>Modifier</th>
+                            <th>Supprimer</th>
+                            <th>Admin</th>
 
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Traverl</td>
-                        <td>Traverl</td>
-                        <td><a href="edit-user.php" class="btn sm">Modifier</a></td>
-                        <td><a href="delete-category.php" class="btn sm danger">Supprimer</a></td>
-                        <td>Oui</td>
-                    </tr>
-                    <tr>
-                        <td>Traverl</td>
-                        <td>Traverl</td>
-                        <td><a href="edit-user.php" class="btn sm">Modifier</a></td>
-                        <td><a href="delete-category.php" class="btn sm danger">Supprimer</a></td>
-                        <td>Oui</td>
-                    </tr>
-                    <tr>
-                        <td>Traverl</td>
-                        <td>Traverl</td>
-                        <td><a href="edit-user.php" class="btn sm">Modifier</a></td>
-                        <td><a href="delete-category.php" class="btn sm danger">Supprimer</a></td>
-                        <td>Oui</td>
-                    </tr>
-                </tbody>
-            </table>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($user = mysqli_fetch_assoc($users)) : ?>
+                            <tr>
+                                <td><?= "{$user['prenom']} {$user['nom']}" ?></td>
+                                <td><?= $user['nom_utilisateur'] ?></td>
+                                <td><a href="<?= ROOT_URL ?>admin/edit-user.php?id=<?= $user['id'] ?>" class="btn sm">Modifier</a></td>
+                                <td><a href="<?= ROOT_URL ?>admin/delete-user.php?id=<?= $user['id'] ?>" class="btn sm danger">Supprimer</a></td>
+                                <td><?= $user['is_admin'] ? 'Oui' : 'Non' ?></td>
+                            </tr>
+                        <?php endwhile ?>
+
+                    </tbody>
+                </table>
+            <?php else : ?>
+                <div class="alert__message error"><?= "aucun utilisateur trouvé." ?></div>
+            <?php endif ?>
         </main>
     </div>
 </section>

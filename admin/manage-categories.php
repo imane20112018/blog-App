@@ -1,6 +1,57 @@
-<?php include 'partials/header.php'; ?>
-
+<?php
+include 'partials/header.php';
+// fetch categories from db 
+$query = "SELECT * FROM categories ORDER BY titre DESC";
+$categories = mysqli_query($connection, $query);
+?>
 <section class="dashboard">
+    <?php if (isset($_SESSION['add-category-success'])) : // shows if add category was successful
+    ?>
+
+        <div class="alert__message success container">
+            <p>
+                <?= $_SESSION['add-category-success'];
+                unset($_SESSION['add-category-success']);
+                ?>
+            </p>
+        </div> 
+        <?php elseif (isset($_SESSION['add-category'])) : // shows if add category was not successful
+    ?>
+        <div class="alert__message error container">
+            <p>
+                <?= $_SESSION['add-category'];
+                unset($_SESSION['add-category']);
+                ?>
+            </p>
+        </div>
+         <?php elseif (isset($_SESSION['edit-category'])) : // shows if edit category was not successful
+    ?>
+        <div class="alert__message error container">
+            <p>
+                <?= $_SESSION['edit-category'];
+                unset($_SESSION['edit-category']);
+                ?>
+            </p>
+        </div>
+        <?php elseif (isset($_SESSION['edit-category-success'])) : // shows if edit category was  successful
+    ?>
+        <div class="alert__message success container">
+            <p>
+                <?= $_SESSION['edit-category-success'];
+                unset($_SESSION['edit-category-success']);
+                ?>
+            </p>
+        </div>
+        <?php elseif (isset($_SESSION['delete-category-success'])) : // shows if delete category was  successful
+    ?>
+        <div class="alert__message success container">
+            <p>
+                <?= $_SESSION['delete-category-success'];
+                unset($_SESSION['delete-category-success']);
+                ?>
+            </p>
+        </div>
+    <?php endif ?>
     <div class="container dashboard__container">
         <button id="show__sidebar-btn" class="sidebar__toggle"><i class="uil uil-angle-right-b"></i></button>
         <button id="hide__sidebar-btn" class="sidebar__toggle"><i class="uil uil-angle-left-b"></i></button>
@@ -43,35 +94,28 @@
         </aside>
         <main>
             <h2>Gérer les catégories</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Titre</th>
-                        <th>Modifier</th>
-                        <th>Supprimer</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Traverl</td>
-                        <td><a href="edit-category.php" class="btn sm">Modifier</a></td>
-                        <td><a href="delete-category.php" class="btn sm danger">Supprimer</a></td>
-
-                    </tr>
-                    <tr>
-                        <td>Traverl</td>
-                        <td><a href="edit-category.php" class="btn sm">Modifier</a></td>
-                        <td><a href="delete-category.php" class="btn sm danger">supprimer</a></td>
-
-                    </tr>
-                    <tr>
-                        <td>Traverl</td>
-                        <td><a href="edit-category.php" class="btn sm">Modifier</a></td>
-                        <td><a href="delete-category.php" class="btn sm danger">Supprimer</a></td>
-
-                    </tr>
-                </tbody>
-            </table>
+            <?php if (mysqli_num_rows($categories) > 0) : ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th>Modifier</th>
+                            <th>Supprimer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($category = mysqli_fetch_assoc($categories)) : ?>
+                            <tr>
+                                <td><?= $category['titre'] ?></td>
+                                <td><a href="<?= ROOT_URL ?>admin/edit-category.php?id=<?= $category['id'] ?>" class="btn sm">Modifier</a></td>
+                                <td><a href="<?= ROOT_URL ?>admin/delete-category.php?id=<?= $category['id'] ?>" class="btn sm danger">Supprimer</a></td>
+                            </tr>
+                        <?php endwhile ?>
+                    </tbody>
+                </table>
+            <?php else : ?>
+                <div class="alert__message error"><?= "Aucune catégoeis trouvée" ?></div>
+            <?php endif ?>
         </main>
     </div>
 </section>

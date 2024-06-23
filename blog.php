@@ -1,104 +1,82 @@
-<?php include 'partials/header.php' ?>
+<?php
+include 'partials/header.php';
+
+
+//fetch all posts from db 
+$query = "SELECT * FROM posts ORDER BY date_time DESC";
+$posts = mysqli_query($connection, $query);
+?>
 
 <section class="search__bar">
-    <form class="container search__bar-container" action="">
+    <form class="container search__bar-container" action="<?= ROOT_URL ?>search.php" method="GET">
         <div>
             <i class="uil uil-search"></i>
-            <input type="search" name="" placeholder="Search">
+            <input type="search" name="search" placeholder="Search">
         </div>
-        <button type="submit" class="btn">Go</button>
+        <button type="submit" name="submit" class="btn">Go</button>
     </form>
 
 </section>
 <!-- ========================END OF SEARCH -->
 
+
 <!-- ========================END OF fatured -->
-<section class="posts">
+<section class="posts <?= $featured ? '' : 'section__extra-margin' ?>">
     <div class="container posts__container">
-        <article class="post">
-            <div class="post__thumbnail">
-                <img src="./images/blog2.webp" alt="">
-            </div>
-            <div class="post__info">
-                <a href="" class="category__button">Wild life</a>
-                <h3 class="post__title"><a href="post.html">Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Dolore,
-                        debitis?</a></h3>
-            </div>
-            <p class="post__body">
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Laboriosam adipisci molestiae ipsa!
-                Provident quibusdam veritatis distinctio consequatur aperiam. Laborum, maxime!
-            </p>
-            <div class="post__author">
-                <div class="post__author-avatar">
-                    <img src="./images/avatar3.webp" alt="">
+        <?php while ($post = mysqli_fetch_assoc($posts)) : ?>
+            <article class="post">
+                <div class="post__thumbnail">
+                    <img src="./images/<?= $post['couverture'] ?>">
                 </div>
-                <div class="post__author-info">
-                    <h5>Par:imane Eddouni</h5>
-                    <small>Juin 2,2024 - 19:25</small>
+                <div class=" post__info">
+                    <?php
+                    //fetch category from categories table using category_id of post 
+                    $categry_id = $post['category_id'];
+                    $category_query = "SELECT * FROM categories WHERE id = $categry_id";
+                    $category_result = mysqli_query($connection, $category_query);
+                    $category = mysqli_fetch_assoc($category_result);
+                    ?>
+                    <a href="<?= ROOT_URL ?>category-posts.php?id=<?= $post['category_id'] ?>" class="category__button"><?= $category['titre'] ?></a>
+                    <h3 class="post__title">
+                        <a href="<?= ROOT_URL ?>post.php?id=<?= $post['id'] ?>"><?= $post['titre'] ?></a>
+                    </h3>
+                    <p class="post__body">
+                        <?= substr($post['body'], 0, 150) ?>...
+                    </p>
+                    <div class="post__author">
+                        <?php
+                        //fetch author from users table using author_id of post 
+                        $author_id = $post['author_id'];
+                        $author_query = "SELECT * FROM users WHERE id = $author_id";
+                        $author_result = mysqli_query($connection, $author_query);
+                        $author = mysqli_fetch_assoc($author_result);
+
+                        ?>
+                        <div class="post__author-avatar">
+                            <img src="./images/<?= $author['avatar'] ?>">
+                        </div>
+                        <div class="post__author-info">
+                            <h5>Par: <?= "{$author['prenom']} {$author['nom']}" ?></h5>
+                            <small>
+                                <?= date("M d, Y- H:i", strtotime($post['date_time'])) ?>
+                            </small>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </article>
-        <article class="post">
-            <div class="post__thumbnail">
-                <img src="./images/blog3.webp" alt="">
-            </div>
-            <div class="post__info">
-                <a href="" class="category__button">Wild life</a>
-                <h3 class="post__title"><a href="post.html">Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Dolore,
-                        debitis?</a></h3>
-            </div>
-            <p class="post__body">
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Laboriosam adipisci molestiae ipsa!
-                Provident quibusdam veritatis distinctio consequatur aperiam. Laborum, maxime!
-            </p>
-            <div class="post__author">
-                <div class="post__author-avatar">
-                    <img src="./images/avatar3.webp" alt="">
-                </div>
-                <div class="post__author-info">
-                    <h5>Par:imane Eddouni</h5>
-                    <small>Juin 2,2024 - 19:25</small>
-                </div>
-            </div>
-        </article>
-        <article class="post">
-            <div class="post__thumbnail">
-                <img src="./images/blog4.webp" alt="">
-            </div>
-            <div class="post__info">
-                <a href="" class="category__button">Wild life</a>
-                <h3 class="post__title"><a href="post.html">Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Dolore,
-                        debitis?</a></h3>
-            </div>
-            <p class="post__body">
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Laboriosam adipisci molestiae ipsa!
-                Provident quibusdam veritatis distinctio consequatur aperiam. Laborum, maxime!
-            </p>
-            <div class="post__author">
-                <div class="post__author-avatar">
-                    <img src="./images/avatar3.webp" alt="">
-                </div>
-                <div class="post__author-info">
-                    <h5>Par:imane Eddouni</h5>
-                    <small>Juin 2,2024 - 19:25</small>
-                </div>
-            </div>
-        </article>
-</section>
-<!-- ========================END OF posts-->
-<div class="category__buttons">
-    <div class="container category__buttons-container">
-        <a href="" class="category__button">Actualites</a>
-        <a href="" class="category__button">Religion</a>
-        <a href="" class="category__button">Nature</a>
-        <a href="" class="category__button">Art</a>
-        <a href="" class="category__button">Tech</a>
-        <a href="" class="category__button">Sport</a>
-        <a href="" class="category__button">Music</a>
+            </article>
+        <?php endwhile ?>
     </div>
-</div>
-<!---- ========================END OF categoreis -->
-<?php include 'partials/footer.php' ?>
+    <!-- ========================END OF posts-->
+    <div class="category__buttons">
+        <div class="container category__buttons-container">
+            <?php
+            $all_categories_query = "SELECT * FROM categories";
+            $all_categories_result = mysqli_query($connection, $all_categories_query);
+
+            ?> <?php while ($category = mysqli_fetch_assoc($all_categories_result)) : ?>
+                <a href="<?= ROOT_URL ?>category-posts.php?id=<?= $category['id'] ?>" class="category__button"><?= $category['titre'] ?></a>
+            <?php endwhile ?>
+        </div>
+    </div>
+    <!---- ========================END OF categoreis -->
+    <?php include 'partials/footer.php' ?>
